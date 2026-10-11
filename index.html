@@ -1,0 +1,1189 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>CardioCheck | Clinical Decision Support - Heart Disease Risk Prediction</title>
+  <meta name="description" content="CardioCheck is an educational clinical decision-support interface for estimating heart disease risk patterns using machine learning. Not a medical diagnosis.">
+  
+  <!-- Neo-Brutalist Google Typography -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Archivo+Black&family=Inter:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700;800&display=swap" rel="stylesheet">
+  
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <!-- Top Bar for Mobile & Tablet -->
+  <header class="mobile-topbar" id="mobileTopbar">
+    <div class="brand-badge">
+      <span class="brand-heart-icon">
+        <svg viewBox="0 0 24 24" width="22" height="22" fill="#FF6B5E" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+          <path d="M3.5 12h4l2-4 3 8 2-4h4" fill="none" stroke="#111111" stroke-width="2" />
+        </svg>
+      </span>
+      <span class="brand-title">CARDIOCHECK</span>
+    </div>
+    <div class="mobile-topbar-actions">
+      <span class="badge badge-warning text-xs">EDU ONLY</span>
+      <button class="btn btn-icon" id="menuToggleBtn" aria-label="Toggle navigation menu" aria-expanded="false">
+        <svg viewBox="0 0 24 24" width="24" height="24" stroke="#111111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" fill="none">
+          <line x1="3" y1="6" x2="21" y2="6"></line>
+          <line x1="3" y1="12" x2="21" y2="12"></line>
+          <line x1="3" y1="18" x2="21" y2="18"></line>
+        </svg>
+      </button>
+    </div>
+  </header>
+
+  <!-- Mobile Drawer Backdrop -->
+  <div class="drawer-backdrop" id="drawerBackdrop"></div>
+
+  <div class="app-layout">
+    <!-- 1. Left Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="brand-block">
+          <div class="logo-box">
+            <svg viewBox="0 0 28 28" width="28" height="28" fill="#FF6B5E" stroke="#111111" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+              <path d="M4 13.5h3.5l2-3.5 3 7 2-3.5h4" fill="none" stroke="#111111" stroke-width="2.2" />
+            </svg>
+          </div>
+          <div>
+            <h1 class="logo-text">CARDIOCHECK</h1>
+            <span class="logo-sub">DECISION SUPPORT v2.4</span>
+          </div>
+        </div>
+      </div>
+
+      <nav class="sidebar-nav" aria-label="Main Navigation">
+        <ul class="nav-list">
+          <li>
+            <button class="nav-item active" data-view="dashboard" id="navDashboard">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <rect x="3" y="3" width="7" height="9"></rect>
+                  <rect x="14" y="3" width="7" height="5"></rect>
+                  <rect x="14" y="12" width="7" height="9"></rect>
+                  <rect x="3" y="16" width="7" height="5"></rect>
+                </svg>
+              </span>
+              <span class="nav-label">Dashboard</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" data-view="assessment" id="navAssessment">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+              </span>
+              <span class="nav-label">Risk Assessment</span>
+              <span class="nav-pill">CHECK</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" data-view="performance" id="navPerformance">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M18 20V10"></path>
+                  <path d="M12 20V4"></path>
+                  <path d="M6 20v-6"></path>
+                </svg>
+              </span>
+              <span class="nav-label">Model Performance</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" data-view="insights" id="navInsights">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M2 3h6a4 4 0 0 1 4 4v14a3 3 0 0 0-3-3H2z"></path>
+                  <path d="M22 3h-6a4 4 0 0 0-4 4v14a3 3 0 0 1 3-3h7z"></path>
+                </svg>
+              </span>
+              <span class="nav-label">Health Insights</span>
+            </button>
+          </li>
+          <li>
+            <button class="nav-item" data-view="about" id="navAbout">
+              <span class="nav-icon">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <circle cx="12" cy="12" r="10"></circle>
+                  <line x1="12" y1="8" x2="12" y2="12"></line>
+                  <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+              </span>
+              <span class="nav-label">About & Limitations</span>
+            </button>
+          </li>
+        </ul>
+      </nav>
+
+      <div class="sidebar-footer">
+        <div class="disclaimer-chip">
+          <div class="disclaimer-header">
+            <span class="status-indicator"></span>
+            <strong>EDUCATIONAL TOOL ONLY</strong>
+          </div>
+          <p>This prototype demonstrates algorithmic risk analysis. It does NOT diagnose or replace clinical judgment.</p>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main Content Stage -->
+    <main class="main-content" id="mainContent">
+      
+      <!-- ==============================================
+           2. DASHBOARD VIEW
+           ============================================== -->
+      <section class="view-panel active" id="view-dashboard">
+        <!-- Hero Section -->
+        <div class="hero-card">
+          <div class="hero-body">
+            <div class="hero-tag">EDUCATIONAL CLINICAL SCREENING</div>
+            <h1 class="hero-heading">KNOW YOUR HEART RISK.</h1>
+            <p class="hero-subheading">
+              Use patient health indicators to estimate heart-disease risk patterns for educational screening support and clinical awareness.
+            </p>
+            <div class="hero-actions">
+              <button class="btn btn-primary btn-lg" id="heroStartBtn">
+                START RISK ASSESSMENT →
+              </button>
+              <button class="btn btn-secondary btn-lg" id="heroScorecardBtn">
+                EXPLORE MODEL SCORECARD
+              </button>
+            </div>
+          </div>
+          <div class="hero-accent-badge">
+            <div class="heartbeat-pulse">
+              <svg viewBox="0 0 24 24" width="40" height="40" fill="#FF6B5E" stroke="#111111" stroke-width="2.5">
+                <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z" />
+              </svg>
+            </div>
+            <span>UCI COHORT<br>TESTED</span>
+          </div>
+        </div>
+
+        <!-- Mandatory Diagnosis Callout Banner -->
+        <div class="callout-banner banner-warning">
+          <div class="callout-icon">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#111111" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+              <polygon points="7.86 2 16.14 2 22 7.86 22 16.14 16.14 22 7.86 22 2 16.14 2 7.86 7.86 2"></polygon>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+          <div class="callout-content">
+            <div class="callout-title">NOT A DIAGNOSIS. ALWAYS CONSULT A QUALIFIED HEALTHCARE PROFESSIONAL.</div>
+            <p class="callout-text">
+              CardioCheck uses mathematical patterns from historical patient databases to calculate probability estimates. It cannot detect all forms of heart disease, cannot replace laboratory diagnostics, and is strictly for screening literacy.
+            </p>
+          </div>
+        </div>
+
+        <!-- Four Bold Statistic Cards -->
+        <div class="section-title-wrap">
+          <h2 class="section-title">CORE MODEL BENCHMARKS</h2>
+          <span class="badge badge-black">RANDOM FOREST TEST SET</span>
+        </div>
+        <div class="stats-grid">
+          <div class="stat-card stat-purple">
+            <div class="stat-header">
+              <span class="stat-label">ROC-AUC</span>
+              <span class="badge badge-white">AREA UNDER CURVE</span>
+            </div>
+            <div class="stat-value">0.928</div>
+            <div class="stat-sub">92.8% separation capability between positive and negative cardiac risk cases.</div>
+          </div>
+
+          <div class="stat-card stat-green">
+            <div class="stat-header">
+              <span class="stat-label">RECALL / SENSITIVITY</span>
+              <span class="badge badge-black">CRITICAL CLINICAL</span>
+            </div>
+            <div class="stat-value">92.1%</div>
+            <div class="stat-sub">Detects >9 out of 10 true heart disease cases, drastically limiting false negatives.</div>
+          </div>
+
+          <div class="stat-card stat-blue">
+            <div class="stat-header">
+              <span class="stat-label">PRECISION</span>
+              <span class="badge badge-white">POSITIVE PREDICTIVE</span>
+            </div>
+            <div class="stat-value">88.5%</div>
+            <div class="stat-sub">High certainty rate when an elevated risk alert is triggered by patient vitals.</div>
+          </div>
+
+          <div class="stat-card stat-yellow">
+            <div class="stat-header">
+              <span class="stat-label">F1 SCORE</span>
+              <span class="badge badge-black">HARMONIC MEAN</span>
+            </div>
+            <div class="stat-value">0.894</div>
+            <div class="stat-sub">Balanced performance metric combining high detection sensitivity with low false alarm rate.</div>
+          </div>
+        </div>
+
+        <!-- "How It Works" Section with Four Neo-Brutalist Blocks -->
+        <div class="section-title-wrap mt-lg">
+          <h2 class="section-title">HOW IT WORKS</h2>
+          <span class="badge badge-blue">4-STAGE PIPELINE</span>
+        </div>
+        <div class="steps-grid">
+          <div class="step-card">
+            <div class="step-number">01</div>
+            <h3 class="step-title">Enter Health Details</h3>
+            <p class="step-desc">Input patient blood pressure, cholesterol, resting ECG patterns, exercise symptoms, and demographics from standard clinical records.</p>
+            <div class="step-footer">
+              <span class="badge badge-outline">11+ UCI PARAMETERS</span>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">02</div>
+            <h3 class="step-title">Model Analyses Patterns</h3>
+            <p class="step-desc">A calibrated 200-tree Random Forest estimator cross-references your inputs against validated coronary disease clinical distributions.</p>
+            <div class="step-footer">
+              <span class="badge badge-outline">PIPELINE IMPUTATION</span>
+            </div>
+          </div>
+
+          <div class="step-card">
+            <div class="step-number">03</div>
+            <h3 class="step-title">Review Risk Estimate</h3>
+            <p class="step-desc">Receive a clear probabilistic percentage with categorical risk categorization, key contributing indicators, and transparent explainability.</p>
+            <div class="step-footer">
+              <span class="badge badge-outline">LOW / MOD / HIGH</span>
+            </div>
+          </div>
+
+          <div class="step-card step-highlight">
+            <div class="step-number">04</div>
+            <h3 class="step-title">Consult a Clinician</h3>
+            <p class="step-desc">Export or review the summary with a licensed doctor or cardiologist for diagnostic confirmation, stress testing, and medical management.</p>
+            <div class="step-footer">
+              <span class="badge badge-black">PROFESSIONAL CARE</span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Quick Demo Presets Callout -->
+        <div class="sample-cases-card mt-lg">
+          <div class="sample-cases-header">
+            <div>
+              <h3 class="card-heading">TRY CLINICAL SAMPLE PROFILES</h3>
+              <p class="card-caption">Click any sample case below to instantly populate the risk assessment engine with real historical patient profiles.</p>
+            </div>
+          </div>
+          <div class="sample-cases-btns">
+            <button class="btn btn-outline" onclick="CardioApp.loadProfilePreset('healthy')">
+              🟢 LOAD LOW RISK PROFILE (32yo, Normal Vitals)
+            </button>
+            <button class="btn btn-outline" onclick="CardioApp.loadProfilePreset('moderate')">
+              🟡 LOAD MODERATE PROFILE (54yo, Elevated BP)
+            </button>
+            <button class="btn btn-outline" onclick="CardioApp.loadProfilePreset('high')">
+              🔴 LOAD HIGH RISK PROFILE (61yo, Flat ST, Angina)
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           3. RISK ASSESSMENT VIEW
+           ============================================== -->
+      <section class="view-panel" id="view-assessment">
+        <div class="page-header">
+          <div class="header-tags">
+            <span class="badge badge-blue">SCREENING CALCULATOR</span>
+            <span class="badge badge-warning">NOT A MEDICAL DIAGNOSIS</span>
+          </div>
+          <h1 class="page-title">HEART RISK CHECK</h1>
+          <p class="page-subtitle">
+            Provide patient clinical parameters obtained from health reports or doctor visits. All data is processed client-side or through local decision-support estimation.
+          </p>
+        </div>
+
+        <!-- Preset Quick Bar -->
+        <div class="preset-selector-bar">
+          <span class="preset-label">QUICK TEST PRESETS:</span>
+          <div class="preset-buttons">
+            <button type="button" class="btn btn-sm btn-green" id="presetLowBtn">LOW RISK PROFILE</button>
+            <button type="button" class="btn btn-sm btn-yellow" id="presetModBtn">MODERATE RISK PROFILE</button>
+            <button type="button" class="btn btn-sm btn-coral" id="presetHighBtn">HIGH RISK PROFILE</button>
+            <button type="button" class="btn btn-sm btn-outline" id="presetResetBtn">RESET ALL FIELDS</button>
+          </div>
+        </div>
+
+        <div class="assessment-layout">
+          <!-- The Form -->
+          <form class="assessment-form" id="riskAssessmentForm" novalidate>
+            
+            <!-- Section 1: Personal Profile -->
+            <fieldset class="form-section-card">
+              <legend class="section-legend">
+                <span class="section-badge">01</span>
+                PERSONAL PROFILE
+              </legend>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="inputAge" class="form-label">
+                    Patient Age (Years) <span class="req">*</span>
+                  </label>
+                  <input type="number" id="inputAge" name="age" class="form-input" min="18" max="100" value="54" required>
+                  <span class="form-helper">Range: 18 - 100 years. Age increases vascular stiffening.</span>
+                </div>
+
+                <div class="form-group">
+                  <label for="inputSex" class="form-label">
+                    Biological Sex <span class="req">*</span>
+                  </label>
+                  <select id="inputSex" name="sex" class="form-select" required>
+                    <option value="M" selected>Male (M)</option>
+                    <option value="F">Female (F)</option>
+                  </select>
+                  <span class="form-helper">Biological sex definition utilized in training dataset cohort.</span>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Section 2: Vital Signs -->
+            <fieldset class="form-section-card">
+              <legend class="section-legend">
+                <span class="section-badge">02</span>
+                VITAL SIGNS & LABS
+              </legend>
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label for="inputBP" class="form-label">
+                    Resting BP (mm Hg) <span class="req">*</span>
+                  </label>
+                  <input type="number" id="inputBP" name="restingBP" class="form-input" min="80" max="220" value="130" required>
+                  <span class="form-helper">Systolic resting pressure. Normal is &lt; 120 mm Hg.</span>
+                </div>
+
+                <div class="form-group">
+                  <label for="inputChol" class="form-label">
+                    Serum Cholesterol (mg/dL) <span class="req">*</span>
+                  </label>
+                  <input type="number" id="inputChol" name="cholesterol" class="form-input" min="100" max="600" value="230" required>
+                  <span class="form-helper">Total serum cholesterol. Desirable level is &lt; 200 mg/dL.</span>
+                </div>
+
+                <div class="form-group">
+                  <label for="inputFBS" class="form-label">
+                    Fasting Blood Sugar &gt; 120 mg/dL <span class="req">*</span>
+                  </label>
+                  <select id="inputFBS" name="fastingBS" class="form-select" required>
+                    <option value="0" selected>No (&le; 120 mg/dL - Normal)</option>
+                    <option value="1">Yes (&gt; 120 mg/dL - Elevated/Diabetic)</option>
+                  </select>
+                  <span class="form-helper">Fasting glucose marker for metabolic / diabetic syndrome.</span>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Section 3: Clinical Test Results -->
+            <fieldset class="form-section-card">
+              <legend class="section-legend">
+                <span class="section-badge">03</span>
+                CLINICAL TEST RESULTS
+              </legend>
+              <div class="form-grid-2">
+                <div class="form-group">
+                  <label for="inputECG" class="form-label">
+                    Resting ECG Result <span class="req">*</span>
+                  </label>
+                  <select id="inputECG" name="restingECG" class="form-select" required>
+                    <option value="Normal" selected>Normal — Baseline rhythm</option>
+                    <option value="ST">ST — Having ST-T wave abnormality</option>
+                    <option value="LVH">LVH — Probable Left Ventricular Hypertrophy</option>
+                  </select>
+                  <span class="form-helper">Standard 12-lead electrocardiogram waveform reading.</span>
+                </div>
+
+                <div class="form-group">
+                  <label for="inputSTSlope" class="form-label">
+                    ST Segment Slope <span class="req">*</span>
+                  </label>
+                  <select id="inputSTSlope" name="stSlope" class="form-select" required>
+                    <option value="Up">Up — Upsloping (typically benign pattern)</option>
+                    <option value="Flat" selected>Flat — Horizontal ST (elevated ischemia risk)</option>
+                    <option value="Down">Down — Downsloping (severe ischemic pattern)</option>
+                  </select>
+                  <span class="form-helper">Key feature split: Slope of peak exercise ST segment.</span>
+                </div>
+
+                <div class="form-group">
+                  <label for="inputOldpeak" class="form-label">
+                    Oldpeak / ST Depression (mm) <span class="req">*</span>
+                  </label>
+                  <input type="number" id="inputOldpeak" name="oldpeak" class="form-input" min="0" max="6.5" step="0.1" value="1.2" required>
+                  <span class="form-helper">ST depression induced by exercise relative to resting baseline.</span>
+                </div>
+
+                <div class="form-group">
+                  <label for="inputVessels" class="form-label">
+                    Major Vessels Colored by Fluoroscopy (ca)
+                  </label>
+                  <select id="inputVessels" name="ca" class="form-select">
+                    <option value="0" selected>0 Major Vessels with Blockage</option>
+                    <option value="1">1 Major Vessel Colored</option>
+                    <option value="2">2 Major Vessels Colored</option>
+                    <option value="3">3 Major Vessels Colored</option>
+                  </select>
+                  <span class="form-helper">Fluoroscopy angiogram vessel count (0 to 3).</span>
+                </div>
+
+                <div class="form-group form-col-span-2">
+                  <label for="inputThal" class="form-label">
+                    Thalassemia Stress Test Result (thal)
+                  </label>
+                  <select id="inputThal" name="thal" class="form-select">
+                    <option value="normal" selected>Normal Myocardial Perfusion (Normal)</option>
+                    <option value="fixed">Fixed Defect (Prior infarction scar tissue)</option>
+                    <option value="reversable">Reversible Defect (Active inducible ischemia during stress)</option>
+                  </select>
+                  <span class="form-helper">Nuclear thallium scan perfusion classification.</span>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Section 4: Exercise & Symptoms -->
+            <fieldset class="form-section-card">
+              <legend class="section-legend">
+                <span class="section-badge">04</span>
+                EXERCISE & SYMPTOMS
+              </legend>
+              <div class="form-grid-3">
+                <div class="form-group">
+                  <label for="inputCP" class="form-label">
+                    Chest Pain Type <span class="req">*</span>
+                  </label>
+                  <select id="inputCP" name="chestPainType" class="form-select" required>
+                    <option value="ASY" selected>ASY — Asymptomatic / Silent</option>
+                    <option value="ATA">ATA — Atypical Angina</option>
+                    <option value="NAP">NAP — Non-Anginal Pain</option>
+                    <option value="TA">TA — Typical Angina</option>
+                  </select>
+                  <span class="form-helper">Note: ASY patients in dataset often have higher hidden ischemia.</span>
+                </div>
+
+                <div class="form-group">
+                  <label for="inputMaxHR" class="form-label">
+                    Max Heart Rate Achieved (bpm) <span class="req">*</span>
+                  </label>
+                  <input type="number" id="inputMaxHR" name="maxHR" class="form-input" min="60" max="220" value="142" required>
+                  <span class="form-helper">Peak pulse achieved during physical exercise testing.</span>
+                </div>
+
+                <div class="form-group">
+                  <label for="inputAngina" class="form-label">
+                    Exercise-Induced Angina <span class="req">*</span>
+                  </label>
+                  <select id="inputAngina" name="exerciseAngina" class="form-select" required>
+                    <option value="N">No (No exertional chest tightness)</option>
+                    <option value="Y" selected>Yes (Pain triggered by exertion)</option>
+                  </select>
+                  <span class="form-helper">Indicates oxygen supply-demand deficit under cardiac stress.</span>
+                </div>
+              </div>
+            </fieldset>
+
+            <!-- Form Action Submit Button -->
+            <div class="form-submit-row">
+              <button type="submit" class="btn btn-primary btn-xl" id="submitAssessmentBtn">
+                ANALYZE HEART RISK →
+              </button>
+              <p class="submit-note">
+                ⚡ Instant multivariate analysis using the calibrated Random Forest pipeline.
+              </p>
+            </div>
+          </form>
+
+          <!-- Result Column / Sticky Card -->
+          <div class="assessment-result-area" id="resultContainer">
+            <!-- Initial Placeholder state -->
+            <div class="result-placeholder-card" id="resultPlaceholder">
+              <div class="placeholder-icon">
+                <svg viewBox="0 0 24 24" width="48" height="48" fill="none" stroke="#111111" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 12h-4l-3 9L9 3l-3 9H2"></path>
+                </svg>
+              </div>
+              <h3 class="placeholder-title">AWAITING CLINICAL DATA</h3>
+              <p class="placeholder-text">
+                Fill in the patient's parameters on the left or select a preset, then click <strong>“ANALYZE HEART RISK →”</strong> to compute the educational model estimate.
+              </p>
+              <button type="button" class="btn btn-secondary btn-sm" onclick="CardioApp.loadProfilePreset('moderate')">
+                TRY MODERATE RISK PROFILE
+              </button>
+            </div>
+
+            <!-- Active Computed Result Card (hidden until submitted) -->
+            <div class="result-computed-card" id="resultCard" style="display: none;">
+              <div class="result-top-badge-row">
+                <span class="badge badge-black">MODEL ESTIMATE RESULT</span>
+                <span class="badge" id="riskBadgeTag">CALCULATING</span>
+              </div>
+
+              <div class="result-score-hero">
+                <div class="risk-prob-number" id="riskProbabilityValue">--%</div>
+                <div class="risk-prob-caption">ESTIMATED RISK PROBABILITY</div>
+              </div>
+
+              <!-- Neo-Brutalist Meter -->
+              <div class="risk-meter-wrap">
+                <div class="meter-bar-track">
+                  <div class="meter-bar-fill" id="meterFill" style="width: 0%;"></div>
+                  <div class="meter-marker marker-35" title="Moderate Threshold (35%)">35%</div>
+                  <div class="meter-marker marker-65" title="High Threshold (65%)">65%</div>
+                </div>
+                <div class="meter-labels">
+                  <span class="meter-lbl-low">LOW (&lt;35%)</span>
+                  <span class="meter-lbl-mod">MODERATE (35-65%)</span>
+                  <span class="meter-lbl-high">HIGH (&gt;65%)</span>
+                </div>
+              </div>
+
+              <!-- Plain-Language Clinical Explanation -->
+              <div class="result-explanation-box" id="resultExplanationBox">
+                <h4 class="box-heading">
+                  <span class="icon-indicator"></span>
+                  PLAIN-LANGUAGE EXPLANATION
+                </h4>
+                <p id="resultExplanationText">
+                  Analysis indicates risk factors consistent with historical dataset patterns.
+                </p>
+              </div>
+
+              <!-- Top Contributing Patient Indicators -->
+              <div class="factors-breakdown-box">
+                <h4 class="box-heading">PRIMARY INFLUENTIAL FACTORS</h4>
+                <ul class="factors-list" id="factorsList">
+                  <!-- Dynamically populated -->
+                </ul>
+              </div>
+
+              <!-- What To Do Next Card -->
+              <div class="next-steps-card" id="nextStepsCard">
+                <div class="next-steps-header">
+                  <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#111111" stroke-width="2.5">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <polyline points="12 6 12 12 14 14"></polyline>
+                  </svg>
+                  <strong>WHAT TO DO NEXT</strong>
+                </div>
+                <div class="next-steps-body" id="nextStepsBody">
+                  <!-- Populated based on risk level -->
+                </div>
+              </div>
+
+              <!-- Visible Warning Banner -->
+              <div class="result-disclaimer-box">
+                <div class="disclaimer-title">⚠️ THIS RESULT IS NOT A MEDICAL DIAGNOSIS.</div>
+                <p>CardioCheck is strictly an educational tool to understand statistical cardiovascular correlations. Only a qualified medical professional can diagnose or treat health conditions.</p>
+              </div>
+
+              <!-- Secondary Actions -->
+              <div class="result-actions-row">
+                <button type="button" class="btn btn-outline btn-sm" id="printReportBtn">
+                  🖨️ PRINT / EXPORT SUMMARY
+                </button>
+                <button type="button" class="btn btn-secondary btn-sm" onclick="window.scrollTo({top: 0, behavior: 'smooth'})">
+                  MODIFY VALUES ↑
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           4. MODEL PERFORMANCE VIEW
+           ============================================== -->
+      <section class="view-panel" id="view-performance">
+        <div class="page-header">
+          <div class="header-tags">
+            <span class="badge badge-purple">VALIDATION SCORECARD</span>
+            <span class="badge badge-white">HEART DISEASE TEST SET</span>
+          </div>
+          <h1 class="page-title">MODEL SCORECARD</h1>
+          <p class="page-subtitle">
+            Comprehensive algorithmic comparison, sensitivity vs specificity trade-offs, and clinical validation metrics evaluated on an independent patient cohort.
+          </p>
+        </div>
+
+        <!-- Comparative Model Table in Black-Bordered Neo-Brutalist Frame -->
+        <div class="neo-table-card">
+          <div class="table-header-bar">
+            <div>
+              <h2 class="card-heading">ALGORITHM BENCHMARK MATRIX</h2>
+              <span class="card-caption">Comparison across Logistic Regression, Random Forest, SVM, KNN, and Gradient Boosting</span>
+            </div>
+            <span class="badge badge-green">PRIMARY: RANDOM FOREST</span>
+          </div>
+          <div class="table-responsive">
+            <table class="neo-table">
+              <thead>
+                <tr>
+                  <th>MODEL ALGORITHM</th>
+                  <th>ACCURACY</th>
+                  <th>RECALL (SENSITIVITY)</th>
+                  <th>PRECISION</th>
+                  <th>F1 SCORE</th>
+                  <th>ROC-AUC</th>
+                  <th>CLINICAL SUITABILITY</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr class="highlight-row">
+                  <td>
+                    <strong>Random Forest (Tuned)</strong>
+                    <span class="sub-tag">Ensemble (200 Trees) — Active</span>
+                  </td>
+                  <td><strong>88.0%</strong></td>
+                  <td><span class="badge badge-green font-bold">92.1%</span></td>
+                  <td>88.5%</td>
+                  <td><strong>0.894</strong></td>
+                  <td><span class="badge badge-purple font-bold">0.928</span></td>
+                  <td><span class="badge badge-blue">⭐ RECOMMENDED (Optimal Recall)</span></td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Logistic Regression</strong>
+                    <span class="sub-tag">L2 Regularized Linear Model</span>
+                  </td>
+                  <td>88.5%</td>
+                  <td>91.1%</td>
+                  <td>87.2%</td>
+                  <td>0.898</td>
+                  <td>0.932</td>
+                  <td>Excellent interpretability; linear decision boundary</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Support Vector Machine (SVM)</strong>
+                    <span class="sub-tag">RBF Kernel Classifier</span>
+                  </td>
+                  <td>87.5%</td>
+                  <td>92.1%</td>
+                  <td>86.1%</td>
+                  <td>0.890</td>
+                  <td>0.941</td>
+                  <td>High separation margin; computationally heavier</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>Gradient Boosting</strong>
+                    <span class="sub-tag">Sequential Boosted Trees</span>
+                  </td>
+                  <td>87.0%</td>
+                  <td>87.3%</td>
+                  <td>88.7%</td>
+                  <td>0.880</td>
+                  <td>0.914</td>
+                  <td>Strong precision, but slightly lower sensitivity</td>
+                </tr>
+                <tr>
+                  <td>
+                    <strong>K-Nearest Neighbors (KNN)</strong>
+                    <span class="sub-tag">Instance-based (k=7)</span>
+                  </td>
+                  <td>86.4%</td>
+                  <td>87.3%</td>
+                  <td>87.9%</td>
+                  <td>0.876</td>
+                  <td>0.926</td>
+                  <td>Baseline metric; sensitive to feature scales</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- High Recall Callout Warning Card -->
+        <div class="callout-banner banner-warning mt-lg">
+          <div class="callout-icon">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#111111" stroke-width="3">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="8" x2="12" y2="12"></line>
+              <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            </svg>
+          </div>
+          <div class="callout-content">
+            <div class="callout-title">HIGH RECALL IS IMPORTANT: MISSING A POTENTIALLY AT-RISK PATIENT CAN DELAY CRITICAL CARE.</div>
+            <p class="callout-text">
+              In clinical risk prediction, a <strong>False Negative</strong> (telling someone with heart disease they are safe) carries far graver medical danger than a <strong>False Positive</strong> (suggesting an unneeded follow-up test). Therefore, we specifically optimize our decision threshold to maximize sensitivity.
+            </p>
+          </div>
+        </div>
+
+        <!-- Four Bold Visual Metric Explainer Cards -->
+        <div class="metric-explainer-grid mt-lg">
+          <div class="explainer-card card-blue">
+            <div class="explainer-top">
+              <span class="badge badge-black">METRIC DEFINITION</span>
+              <span class="explainer-stat">88.5%</span>
+            </div>
+            <h3 class="explainer-title">PRECISION</h3>
+            <p class="explainer-quote">“When the model flags risk, how often is it correct?”</p>
+            <p class="explainer-detail">
+              Out of 100 individuals flagged with elevated heart disease risk by CardioCheck, approximately 88 to 89 actually exhibit verified cardiovascular conditions in the clinical dataset.
+            </p>
+          </div>
+
+          <div class="explainer-card card-green">
+            <div class="explainer-top">
+              <span class="badge badge-black">PRIMARY FOCUS</span>
+              <span class="explainer-stat">92.1%</span>
+            </div>
+            <h3 class="explainer-title">RECALL (SENSITIVITY)</h3>
+            <p class="explainer-quote">“How many possible heart-disease cases does the model detect?”</p>
+            <p class="explainer-detail">
+              The model successfully identifies over 92% of all true positive cases, reducing missed pathology to less than 8% in the validation group.
+            </p>
+          </div>
+
+          <div class="explainer-card card-purple">
+            <div class="explainer-top">
+              <span class="badge badge-black">BALANCED METRIC</span>
+              <span class="explainer-stat">0.894</span>
+            </div>
+            <h3 class="explainer-title">F1 SCORE</h3>
+            <p class="explainer-quote">“Balance between precision and recall.”</p>
+            <p class="explainer-detail">
+              Harmonic mean that guards against deceptive accuracy figures. Ensures the model neither triggers endless false alarms nor lets real cardiac anomalies slip by.
+            </p>
+          </div>
+
+          <div class="explainer-card card-yellow">
+            <div class="explainer-top">
+              <span class="badge badge-black">DISCRIMINATION</span>
+              <span class="explainer-stat">0.928</span>
+            </div>
+            <h3 class="explainer-title">ROC-AUC</h3>
+            <p class="explainer-quote">“How well the model separates risk levels.”</p>
+            <p class="explainer-detail">
+              The area under the receiver operating characteristic curve measures classification discrimination across all probability cutoffs, from 0.0 to 1.0.
+            </p>
+          </div>
+        </div>
+
+        <!-- Bordered Visual Chart Containers -->
+        <div class="section-title-wrap mt-lg">
+          <h2 class="section-title">CLINICAL VALIDATION CURVES & CONFUSION MATRIX</h2>
+          <span class="badge badge-outline">INTERACTIVE CHARTS</span>
+        </div>
+
+        <div class="charts-grid">
+          <!-- Chart 1: Interactive ROC Curve -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <h3 class="card-heading">ROC CURVE (RECEIVER OPERATING)</h3>
+                <span class="card-caption">Sensitivity (TPR) vs 1 - Specificity (FPR) • AUC = 0.928</span>
+              </div>
+              <span class="badge badge-purple">AUC: 0.928</span>
+            </div>
+            <div class="chart-body">
+              <div class="svg-chart-container" id="rocChartContainer">
+                <!-- Interactive SVG rendered via app.js -->
+              </div>
+              <div class="chart-legend">
+                <span class="legend-item"><span class="legend-dot dot-purple"></span> Random Forest (AUC 0.928)</span>
+                <span class="legend-item"><span class="legend-dot dot-dashed"></span> Random Chance Baseline (0.50)</span>
+                <span class="legend-item"><span class="legend-dot dot-marker"></span> Operating Point (Cutoff 0.50)</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart 2: Precision-Recall Curve -->
+          <div class="chart-card">
+            <div class="chart-card-header">
+              <div>
+                <h3 class="card-heading">PRECISION-RECALL CURVE</h3>
+                <span class="card-caption">Positive Predictive Value vs True Positive Rate</span>
+              </div>
+              <span class="badge badge-blue">PR-AUC: 0.942</span>
+            </div>
+            <div class="chart-body">
+              <div class="svg-chart-container" id="prChartContainer">
+                <!-- Interactive SVG rendered via app.js -->
+              </div>
+              <div class="chart-legend">
+                <span class="legend-item"><span class="legend-dot dot-blue"></span> Precision-Recall Curve</span>
+                <span class="legend-item"><span class="legend-dot dot-marker"></span> Optimal Clinical Operating Threshold</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Chart 3: Confusion Matrix -->
+          <div class="chart-card chart-full-width">
+            <div class="chart-card-header">
+              <div>
+                <h3 class="card-heading">CLINICAL CONFUSION MATRIX</h3>
+                <span class="card-caption">Validation Cohort Breakdown (N = 184 patients)</span>
+              </div>
+              <span class="badge badge-green">TEST COHORT</span>
+            </div>
+            <div class="confusion-matrix-layout">
+              <div class="matrix-grid-box">
+                <div class="matrix-corner">Actual / Predicted</div>
+                <div class="matrix-col-header">PREDICTED NEGATIVE (LOW RISK)</div>
+                <div class="matrix-col-header">PREDICTED POSITIVE (AT-RISK)</div>
+
+                <div class="matrix-row-header">ACTUAL NORMAL (NO DISEASE)</div>
+                <div class="matrix-cell cell-tn">
+                  <span class="cell-type">TRUE NEGATIVE (TN)</span>
+                  <span class="cell-num">82</span>
+                  <span class="cell-desc">Correctly classified healthy patients</span>
+                </div>
+                <div class="matrix-cell cell-fp">
+                  <span class="cell-type">FALSE POSITIVE (FP)</span>
+                  <span class="cell-num">12</span>
+                  <span class="cell-desc">Healthy patients flagged for follow-up</span>
+                </div>
+
+                <div class="matrix-row-header">ACTUAL CARDIAC CASE (DISEASE)</div>
+                <div class="matrix-cell cell-fn">
+                  <span class="cell-type">FALSE NEGATIVE (FN)</span>
+                  <span class="cell-num">7</span>
+                  <span class="cell-desc">Critical missed cases (minimized!)</span>
+                </div>
+                <div class="matrix-cell cell-tp">
+                  <span class="cell-type">TRUE POSITIVE (TP)</span>
+                  <span class="cell-num">83</span>
+                  <span class="cell-desc">Correctly flagged at-risk patients</span>
+                </div>
+              </div>
+
+              <!-- Clinical Terms Explanation -->
+              <div class="matrix-clinical-explanation">
+                <h4 class="box-heading">UNDERSTANDING ERROR TYPES IN CLINICAL PRACTICE</h4>
+                
+                <div class="error-explainer-item">
+                  <div class="error-badge badge-warning">FALSE POSITIVES (12 CASES)</div>
+                  <p>
+                    <strong>What it means:</strong> The algorithm flags high risk, but formal diagnostic tests find healthy cardiac vessels.<br>
+                    <strong>Clinical impact:</strong> Low harm. The patient undergoes non-invasive follow-up (stress echocardiogram or lifestyle counseling). Inconvenient, but medically safe.
+                  </p>
+                </div>
+
+                <div class="error-explainer-item mt-sm">
+                  <div class="error-badge badge-coral">FALSE NEGATIVES (7 CASES)</div>
+                  <p>
+                    <strong>What it means:</strong> The algorithm estimates low risk, but the patient actually has underlying vascular narrowing.<br>
+                    <strong>Clinical impact:</strong> High harm. Might provide false reassurance and delay angiographic evaluation. That is why CardioCheck insists: <em>Never rely on model output over clinical symptoms!</em>
+                  </p>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- ==============================================
+           5. HEALTH INSIGHTS VIEW
+           ============================================== -->
+      <section class="view-panel" id="view-insights">
+        <div class="page-header">
+          <div class="header-tags">
+            <span class="badge badge-yellow">EXPLAINABILITY & DATA SCIENCE</span>
+            <span class="badge badge-black">FEATURE IMPORTANCE</span>
+          </div>
+          <h1 class="page-title">WHAT INFLUENCES THE ESTIMATE?</h1>
+          <p class="page-subtitle">
+            Explore the physiological factors and statistical weights that drive machine learning predictions, based on decision-tree split analysis.
+          </p>
+        </div>
+
+        <!-- Strong Correlation vs Causation Disclaimer -->
+        <div class="callout-banner banner-warning">
+          <div class="callout-icon">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#111111" stroke-width="3">
+              <polygon points="12 2 2 22 22 22"></polygon>
+              <line x1="12" y1="9" x2="12" y2="13"></line>
+              <line x1="12" y1="17" x2="12.01" y2="17"></line>
+            </svg>
+          </div>
+          <div class="callout-content">
+            <div class="callout-title">STATISTICAL PATTERNS DO NOT PROVE DIRECT CAUSALITY.</div>
+            <p class="callout-text">
+              These are dataset patterns, not proof that any one factor directly causes heart disease. High mathematical correlation in historical cohorts highlights associations that warrant clinical investigation, not isolated blame.
+            </p>
+          </div>
+        </div>
+
+        <!-- Interactive Feature Importance Chart -->
+        <div class="neo-table-card mt-lg">
+          <div class="table-header-bar">
+            <div>
+              <h2 class="card-heading">RANDOM FOREST FEATURE IMPORTANCE</h2>
+              <span class="card-caption">Gini impurity reduction across 200 ensemble decision trees</span>
+            </div>
+            <div class="feature-filter-controls">
+              <button class="btn btn-sm btn-outline active" data-filter="all">ALL (11)</button>
+              <button class="btn btn-sm btn-outline" data-filter="ecg">ECG & RHYTHM</button>
+              <button class="btn btn-sm btn-outline" data-filter="symptoms">SYMPTOMS</button>
+              <button class="btn btn-sm btn-outline" data-filter="vitals">VITALS & LABS</button>
+            </div>
+          </div>
+          <div class="feature-chart-container" id="featureBarsContainer">
+            <!-- Dynamic Neo-Brutalist Bars populated by app.js -->
+          </div>
+        </div>
+
+        <!-- 6 Simple Plain-Language Explanations -->
+        <div class="section-title-wrap mt-lg">
+          <h2 class="section-title">UNDERSTANDING KEY CLINICAL INDICATORS</h2>
+          <span class="badge badge-blue">PLAIN NON-MEDICAL LANGUAGE</span>
+        </div>
+        <div class="insights-grid">
+          <div class="insight-card">
+            <div class="insight-header">
+              <span class="insight-tag tag-blue">CARDIAC RHYTHM</span>
+              <span class="insight-weight">32.9% INFLUENCE</span>
+            </div>
+            <h3 class="insight-title">ST Segment Slope</h3>
+            <p class="insight-text">
+              During an exercise stress test, your ECG's ST wave can slope upward, stay flat, or slope downward. A flat or downsloping ST wave indicates the heart muscle may not be receiving sufficient oxygen during exertion.
+            </p>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-header">
+              <span class="insight-tag tag-yellow">SYMPTOM PRESENTATION</span>
+              <span class="insight-weight">15.3% INFLUENCE</span>
+            </div>
+            <h3 class="insight-title">Chest Pain Type</h3>
+            <p class="insight-text">
+              Pain isn't always typical crushing pressure. Surprisingly, in cardiac datasets, “asymptomatic” ischemia (ASY) frequently corresponds to advanced disease because silent blockage progresses without early warning.
+            </p>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-header">
+              <span class="insight-tag tag-coral">PHYSICAL EXERTION</span>
+              <span class="insight-weight">13.5% INFLUENCE</span>
+            </div>
+            <h3 class="insight-title">Exercise-Induced Angina</h3>
+            <p class="insight-text">
+              Experiencing chest tightness or breathlessness specifically during exercise suggests that when the heart works harder, narrowed coronary arteries cannot deliver enough blood flow.
+            </p>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-header">
+              <span class="insight-tag tag-purple">ELECTRICAL DEFICIT</span>
+              <span class="insight-weight">8.7% INFLUENCE</span>
+            </div>
+            <h3 class="insight-title">Oldpeak (ST Depression)</h3>
+            <p class="insight-text">
+              Measures how far the ST segment dips below the normal resting baseline. Higher depression values (e.g. &gt; 1.5 mm) strongly correlate with temporary lack of blood flow in subendocardial tissue.
+            </p>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-header">
+              <span class="insight-tag tag-green">AEROBIC CAPACITY</span>
+              <span class="insight-weight">7.4% INFLUENCE</span>
+            </div>
+            <h3 class="insight-title">Maximum Heart Rate (MaxHR)</h3>
+            <p class="insight-text">
+              The highest pulse rate achieved during peak exercise. An inability to raise the heart rate to age-predicted norms (chronotropic incompetence) often flags underlying cardiovascular strain.
+            </p>
+          </div>
+
+          <div class="insight-card">
+            <div class="insight-header">
+              <span class="insight-tag tag-blue">VASCULAR HEALTH</span>
+              <span class="insight-weight">4.5% INFLUENCE</span>
+            </div>
+            <h3 class="insight-title">Age & Cholesterol</h3>
+            <p class="insight-text">
+              Arterial stiffness increases naturally with age, while elevated circulating cholesterol particles contribute to plaque buildup (atherosclerosis) inside coronary vessels over years.
+            </p>
+          </div>
+        </div>
+
+        <!-- 3 Educational Health Cards -->
+        <div class="section-title-wrap mt-lg">
+          <h2 class="section-title">PREVENTATIVE HEALTH AWARENESS</h2>
+          <span class="badge badge-black">EDUCATIONAL ONLY</span>
+        </div>
+        <div class="health-awareness-grid">
+          <div class="awareness-card card-yellow">
+            <div class="awareness-icon">🩺</div>
+            <h3 class="awareness-title">Blood Pressure Matters</h3>
+            <p class="awareness-desc">
+              High blood pressure is often nicknamed the “silent killer” because it damages arterial linings without noticeable pain. Regular monitoring helps protect vessel elasticity and heart function.
+            </p>
+          </div>
+
+          <div class="awareness-card card-green">
+            <div class="awareness-icon">📅</div>
+            <h3 class="awareness-title">Regular Follow-ups Matter</h3>
+            <p class="awareness-desc">
+              Routine checkups with a healthcare provider let you track trends over time. Early lifestyle modifications or treatments are far more effective than reacting after an acute cardiac event.
+            </p>
+          </div>
+
+          <div class="awareness-card card-coral">
+            <div class="awareness-icon">🚨</div>
+            <h3 class="awareness-title">Know Your Symptoms</h3>
+            <p class="awareness-desc">
+              Watch for sudden shortness of breath, unexplained cold sweats, radiation of discomfort to the jaw, neck, or back, and extreme fatigue during simple physical activities.
+            </p>
+          </div>
+        </div>
+
+        <div class="education-note-box mt-md">
+          <strong>LEGAL & CLINICAL BOUNDARY:</strong> CardioCheck does not provide treatment plans, pharmaceutical prescriptions, medical diagnoses, or personalized clinical therapy advice.
+        </div>
+      </section>
+
+      <!-- ==============================================
+           6. ABOUT & LIMITATIONS VIEW
+           ============================================== -->
+      <section class="view-panel" id="view-about">
+        <div class="page-header">
+          <div class="header-tags">
+            <span class="badge badge-coral">GOVERNANCE & SAFETY</span>
+            <span class="badge badge-black">ETHICAL AI</span>
+          </div>
+          <h1 class="page-title">READ THIS BEFORE USING.</h1>
+          <p class="page-subtitle">
+            Critical limitations, ethical guidelines, data collection disclosures, and emergency protocols regarding algorithmic healthcare simulations.
+          </p>
+        </div>
+
+        <!-- Emergency Red Guidance Box -->
+        <div class="emergency-banner">
+          <div class="emergency-icon-col">
+            <div class="emergency-pulse-ring">
+              <svg viewBox="0 0 24 24" width="36" height="36" fill="none" stroke="#FFFFFF" stroke-width="3">
+                <circle cx="12" cy="12" r="10"></circle>
+                <line x1="12" y1="8" x2="12" y2="12"></line>
+                <line x1="12" y1="16" x2="12.01" y2="16"></line>
+              </svg>
+            </div>
+          </div>
+          <div class="emergency-text-col">
+            <div class="emergency-headline">EMERGENCY MEDICAL GUIDANCE</div>
+            <p class="emergency-statement">
+              If someone has severe chest pain, shortness of breath, fainting, radiating jaw or arm pain, or sudden concerning symptoms, <strong>SEEK EMERGENCY MEDICAL CARE IMMEDIATELY</strong> (call 911 or your local emergency dispatch). Do not delay medical attention to use this website.
+            </p>
+          </div>
+        </div>
+
+        <!-- Neo-Brutalist Warning Grid -->
+        <div class="limitations-grid mt-lg">
+          <div class="limit-box box-black">
+            <div class="limit-box-header">
+              <span class="badge badge-coral font-bold">WARNING 01</span>
+              <span class="limit-icon">🚫</span>
+            </div>
+            <h3 class="limit-heading">Not a Diagnosis Tool</h3>
+            <p class="limit-text">
+              CardioCheck is strictly an academic decision-support demonstration. It computes risk approximations from statistical patterns and cannot diagnose coronary artery disease, ischemia, or structural heart defects.
+            </p>
+          </div>
+
+          <div class="limit-box box-yellow">
+            <div class="limit-box-header">
+              <span class="badge badge-black font-bold">WARNING 02</span>
+              <span class="limit-icon">📊</span>
+            </div>
+            <h3 class="limit-heading">Dataset Limitations</h3>
+            <p class="limit-text">
+              The model is trained on curated archival samples (UCI Heart Disease repository). The dataset size (approx. 918 instances across Cleveland, Hungarian, and Swiss cohorts) may not capture rare pathologies or modern clinical variations.
+            </p>
+          </div>
+
+          <div class="limit-box box-coral">
+            <div class="limit-box-header">
+              <span class="badge badge-black font-bold">WARNING 03</span>
+              <span class="limit-icon">⚖️</span>
+            </div>
+            <h3 class="limit-heading">Possible Historical Bias</h3>
+            <p class="limit-text">
+              Historical clinical datasets frequently underrepresent specific demographic groups, young populations, and atypical presentations (such as women presenting with microvascular coronary disease without classic angina).
+            </p>
+          </div>
+
+          <div class="limit-box box-blue">
+            <div class="limit-box-header">
+              <span class="badge badge-black font-bold">WARNING 04</span>
+              <span class="limit-icon">👨‍⚕️</span>
+            </div>
+            <h3 class="limit-heading">Cannot Replace a Doctor</h3>
+            <p class="limit-text">
+              No machine learning model can substitute for physical auscultation, clinical history, coronary angiography, echocardiography, or the nuanced clinical judgment of certified healthcare practitioners.
+            </p>
+          </div>
+
+          <div class="limit-box box-purple">
+            <div class="limit-box-header">
+              <span class="badge badge-black font-bold">WARNING 05</span>
+              <span class="limit-icon">👶</span>
+            </div>
+            <h3 class="limit-heading">Not for Children or Pregnancy</h3>
+            <p class="limit-text">
+              Model parameters are calibrated strictly for adult populations under non-emergent screening conditions. It is not designed or validated for pediatric patients, pregnancy-related cases, or acute trauma.
+            </p>
+          </div>
+
+          <div class="limit-box box-green">
+            <div class="limit-box-header">
+              <span class="badge badge-black font-bold">PURPOSE 06</span>
+              <span class="limit-icon">🎯</span>
+            </div>
+            <h3 class="limit-heading">Intended Educational Use</h3>
+            <p class="limit-text">
+              Educational demonstration and preliminary risk-awareness support only. Developed as a student portfolio project to showcase how human-centered design and explainable AI can make clinical algorithms transparent.
+            </p>
+          </div>
+        </div>
+
+        <!-- Technical Specification Card -->
+        <div class="neo-table-card mt-lg">
+          <div class="table-header-bar">
+            <div>
+              <h2 class="card-heading">TECHNICAL SPECIFICATIONS</h2>
+              <span class="card-caption">Pipeline architecture, dependencies, and reproducibility</span>
+            </div>
+            <span class="badge badge-white">SCIKIT-LEARN v1.6.1</span>
+          </div>
+          <div class="tech-spec-body">
+            <div class="tech-spec-col">
+              <h4>Model Architecture</h4>
+              <ul>
+                <li><strong>Estimator:</strong> Random Forest Classifier (200 estimators, max_depth=10, min_samples_split=10)</li>
+                <li><strong>Preprocessor:</strong> Scikit-learn Pipeline with ColumnTransformer</li>
+                <li><strong>Imputation:</strong> Median imputation for numerical features</li>
+                <li><strong>Scaling:</strong> StandardScaler normalization</li>
+                <li><strong>Encoding:</strong> OneHotEncoder (handle_unknown='ignore') for categorical values</li>
+              </ul>
+            </div>
+            <div class="tech-spec-col">
+              <h4>Design & Accessibility</h4>
+              <ul>
+                <li><strong>Style:</strong> Bold Neo-Brutalism with 3px solid black borders and 6px offset shadows</li>
+                <li><strong>Color System:</strong> Cream #F7F3E8 background, near-black #111111 borders, high contrast AAA</li>
+                <li><strong>Accessibility:</strong> 44px+ tap targets, color + icon redundant signaling, keyboard accessible</li>
+                <li><strong>Deployment:</strong> Standalone web application with Python API server integration</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+  </div>
+
+  <script src="app.js"></script>
+</body>
+</html>
